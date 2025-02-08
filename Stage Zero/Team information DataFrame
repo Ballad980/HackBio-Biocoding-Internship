@@ -1,0 +1,13 @@
+# Definition of vectors
+name <- c("Mawada E.A Abakar", "Shuayb Anidu", "Uto-Obong David")
+slack_name <- c("mawada", "Shu'ayb", "Ornament")
+email <- c("mawada_abdalla88@hotmail.com", 
+           "anidubabatunde100@gmail.com", 
+           "davidutobong@gmail.com")
+hobby <- c("Travelling|cooking", "Soccer", "Reading|Travelling")
+country <- c("Sudan","Nigeria" , "Nigeria")
+discipline <- c("Translational Medicine & Bioinformatics", "Medical Physiology", "Pharmacy")
+prefered_lang <- c("R", "R", "R")
+# Create a data frame from the vectors
+info_df <- data.frame(name, slack_name, email, hobby, country, discipline, prefered_lang)
+print(info_df)
