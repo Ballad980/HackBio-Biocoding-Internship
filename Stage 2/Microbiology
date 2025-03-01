@@ -1,0 +1,66 @@
+**Questions**
+Plot all the growth curves of OD600 vs Time for the different Strains with the following instructions:
+
+# Getting url and reading in the data(everything will be done in Base R)
+url <- "https://raw.githubusercontent.com/HackBio-Internship/2025_project_collection/refs/heads/main/Python/Dataset/mcgc.tsv"
+#You can install readr pakage to use read.delim()
+data <- read.table(url, sep = "\t", header = TRUE, stringsAsFactors = FALSE)
+print(head(data))
+
+*For each strain, plot a growth curve of the the knock out (-) an knock in (+) strain overlaid on top of each other*
+
+#I'll write a function that plots the graph for reproducibility
+line_plot <- function(time, wildA, mutantA, wildB, mutantB,wildC, mutantC, title){
+    #Create an empty plot with proper axis labels and title
+    ## using 'n' in type ensures no plot is shown
+    plot(time,wildA, type = "n", xlab = "Time", ylab = "OD600",
+     main = paste("Growth curve for",title),
+     ylim = range(c(wildA, mutantA, wildB, mutantB, wildC, mutantC)))  # Ensure all lines fit
+    #plot lines
+    lines(time, wildA, type = "l", col = "blue4")
+    lines(time, mutantA, type = "l", col = "dodgerblue")
+    lines(time, wildB, type = "l", col = "green4")
+    lines(time, mutantB, type = "l", col = "lightgreen")
+    lines(time, wildC, type = "l", col = "red4")
+    lines(time, mutantC, type = "l", col = "tomato2")
+    #Add legend
+    legend("bottomright", legend = c("WildtypeA", "MutantA","WildtypeB", "MutantB","WildtypeC", "MutantC"),
+       col = c("blue4", "dodgerblue","green4","lightgreen","red4","tomato2"), lty = 1)
+}
+# Using the function
+line_plot(data$time, data$A1, data$A2, data$B1, data$B2,data$C1, data$C2, title="Strain1_Rep1")
+line_plot(data$time, data$A3, data$A4, data$B3, data$B4,data$C3, data$C4, title="Strain1_Rep2")
+line_plot(data$time, data$A5, data$A6, data$B5, data$B6,data$C5, data$C6, title="Strain2_Rep1")
+line_plot(data$time, data$A7, data$A8, data$B7, data$B8,data$C7, data$C8, title="Strain2_Rep2")
+line_plot(data$time, data$A9, data$A10, data$B9, data$B10,data$C9, data$C10, title="Strain3_Rep1")
+line_plot(data$time, data$A11, data$A12, data$B11, data$B12,data$C11, data$C12, title="Strain3_Rep2")
+
+
+*Using your function from last stage, determine the time to reach the carrying capacity for each strain/mutant*
+
+# Function to determine time to reach carrying capacity
+carrying_cap_time <- function(time, od_list){
+    # Initialize a vector to store the max times
+    max_times <- numeric(length(od_list))
+    #create a for loop to loop through each od value and return their max time
+    for (i in seq_along(od_list)){ #loop through each OD vector
+        od <- od_list[[i]] #get the current od vector
+        #find the index where od reaches its maximum value
+        index_max <- which.max(od)
+        # Store corresponding time
+        max_times[i] <- time[index_max]
+    }
+    # separate odd and even indices
+        max_times_even <- max_times[seq(2, length(max_times), by = 2)]
+        max_times_odd <- max_times[seq(1, length(max_times), by = 2)]
+        
+        # Create result
+        final_result <- data.frame("Wildtype" = max_times_odd,
+                                   "Mutant" = max_times_even)
+    return(final_result)
+}   
+
+*Generate a scatter plot of the time it takes to reach carrying capacity for the knock out and the knock in strains*
+Generate a box plot of the time it takes to reach carrying capacity for the knock out and the knock in strains
+Is there a statistical difference in the time it takes the knock out strains to reach their maximum carrying capacity compared to the knock in strains
+What do you see? Explain your observations as comments in your code
