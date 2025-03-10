@@ -1,1 +1,34 @@
+Write a function for translating DNA to protein
 
+#Create vectors of all DNA transalateing to amino acids
+F <- c("TTT", "TTC")
+L <- c("TTA","TTG", "CTT", "CTC", "CTA", "CTG")
+I <- c("ATT", "ATC", "ATA")
+M <- c("ATG")
+V <- c("GTT", "GTC", "GTA", "GTG")
+S <- c("TCT", "TCC", "TCA", "TCG", "AGT", "AGC")
+P <- c("CCT", "CCC", "CCA", "CCG")
+T <- c("ACT", "ACC", "ACA", "ACG")
+A <- c("GCT", "GCC", "GCA", "GCG")
+Y <- c("TAT", "TAC")
+s <- c("TAA", "TAG", "TGA")
+H <- c("CAT", "CAC")
+Q <- c("CAA", "CAG")
+N <- c("AAT", "AAC")
+K <- c("AAA", "AAG")
+D <- c("GAT", "GAC")
+E <- c("GAA", "GAG")
+C <- c("TGT", "TGC")
+W <- c("TGG")
+R <- c("CGT", "CGC", "CGA", "CGG", "AGA", "AGG")
+G <- c("GGT", "GGC", "GGA", "GGG")
+
+#create a list that carries all amino acids
+aa <- list(F,L,I,M,V,S,P,T,A,Y,s,H,Q,N,K,D,E,C,W,R,G)
+DNA <- "GTTAGGCCAACAGGGAAGCGCGGAGCCGCAGATCTGGTCCGTCGCTCGCCTGGGTGCCTGGAGCTGAGCTGCGGCAAGGCCCGGCTCCTGTTCGACCGCCCGAGGGGTGTGCGTGTGCGCGTTGCGGAGGGTGCGCTCAG
+       AGGGCCGCGTCGTGGCTGCAGCGGCTGCTGCCGCCGCAGGGGATCTAATATCACCTACCTGTCCCTGTCA"
+
+#translation of DNA to protein involves first transcription of DNA to RNA then translation to protein. However, since the codons provided here still translate 
+#to the same protein with difference being that for RNA, Uracil(U) replaces Thymine(T), I'll write a code that directly changes from DNA to protein. 
+
+translator <- function(DNA, AA) {}
