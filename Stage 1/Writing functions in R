@@ -1,34 +1,51 @@
 Write a function for translating DNA to protein
 
-#Create vectors of all DNA transalateing to amino acids
-F <- c("TTT", "TTC")
-L <- c("TTA","TTG", "CTT", "CTC", "CTA", "CTG")
-I <- c("ATT", "ATC", "ATA")
-M <- c("ATG")
-V <- c("GTT", "GTC", "GTA", "GTG")
-S <- c("TCT", "TCC", "TCA", "TCG", "AGT", "AGC")
-P <- c("CCT", "CCC", "CCA", "CCG")
-T <- c("ACT", "ACC", "ACA", "ACG")
-A <- c("GCT", "GCC", "GCA", "GCG")
-Y <- c("TAT", "TAC")
-s <- c("TAA", "TAG", "TGA")
-H <- c("CAT", "CAC")
-Q <- c("CAA", "CAG")
-N <- c("AAT", "AAC")
-K <- c("AAA", "AAG")
-D <- c("GAT", "GAC")
-E <- c("GAA", "GAG")
-C <- c("TGT", "TGC")
-W <- c("TGG")
-R <- c("CGT", "CGC", "CGA", "CGG", "AGA", "AGG")
-G <- c("GGT", "GGC", "GGA", "GGG")
-
-#create a list that carries all amino acids
-aa <- list(F,L,I,M,V,S,P,T,A,Y,s,H,Q,N,K,D,E,C,W,R,G)
-DNA <- "GTTAGGCCAACAGGGAAGCGCGGAGCCGCAGATCTGGTCCGTCGCTCGCCTGGGTGCCTGGAGCTGAGCTGCGGCAAGGCCCGGCTCCTGTTCGACCGCCCGAGGGGTGTGCGTGTGCGCGTTGCGGAGGGTGCGCTCAG
-       AGGGCCGCGTCGTGGCTGCAGCGGCTGCTGCCGCCGCAGGGGATCTAATATCACCTACCTGTCCCTGTCA"
-
 #translation of DNA to protein involves first transcription of DNA to RNA then translation to protein. However, since the codons provided here still translate 
 #to the same protein with difference being that for RNA, Uracil(U) replaces Thymine(T), I'll write a code that directly changes from DNA to protein. 
 
-translator <- function(DNA, AA) {}
+
+translator <- function(DNA) {
+    # Create a vector of codon(s) for each amino acid
+    F <- c("TTT", "TTC")
+    L <- c("TTA","TTG", "CTT", "CTC", "CTA", "CTG")
+    I <- c("ATT", "ATC", "ATA")
+    M <- c("ATG")
+    V <- c("GTT", "GTC", "GTA", "GTG")
+    S <- c("TCT", "TCC", "TCA", "TCG", "AGT", "AGC")
+    P <- c("CCT", "CCC", "CCA", "CCG")
+    T <- c("ACT", "ACC", "ACA", "ACG")
+    A <- c("GCT", "GCC", "GCA", "GCG")
+    Y <- c("TAT", "TAC")
+    s <- c("TAA", "TAG", "TGA")
+    H <- c("CAT", "CAC")
+    Q <- c("CAA", "CAG")
+    N <- c("AAT", "AAC")
+    K <- c("AAA", "AAG")
+    D <- c("GAT", "GAC")
+    E <- c("GAA", "GAG")
+    C <- c("TGT", "TGC")
+    W <- c("TGG")
+    R <- c("CGT", "CGC", "CGA", "CGG", "AGA", "AGG")
+    G <- c("GGT", "GGC", "GGA", "GGG")
+
+    #create a list that carries all amino acids
+    aa <- list(F = F, L = L, I = I, M = M, V = V, S = S, 
+            P = P, T = T, A = A, Y = Y, S_Stop = s, H = H, Q = Q, 
+           N = N, K = K, D = D, E = E, C = C, W = W, R = R, G = G)
+    DNA <- gsub("[[:space:]]", "", DNA) #Incase the DNA input has spaces or new line characters. It will removed before further processing
+    #split DNA into group of 3 letters
+    n <- nchar(DNA)
+    codons <- substring(DNA, seq(1, n, 3), seq(3, n, 3))
+    # Match codons to their corresponding amino acids
+    match <- sapply(codons, function(codon) {
+        name <- names(aa)[sapply(aa, function(x) codon %in% x)]
+        if (length(name) == 0) NA else name  # Handle non-matching cases
+    })
+    protein_sequence <- paste(match, collapse = "")
+    return(protein_sequence)
+}
+dna <- "GTTAGGCCAACAGGGAAGCGCGGAGCCGCAGATCTGGTCCGTCGCTCGCCTGGGTGCCTGGAGCTGAGCTGCGGCAAGGCCCGGCTCCTGTTCGACCGCCCGAGGGGTGTGCGTGTGCGCGTTGCGGAGGGTGCGCTCAGAGGGCCGCGTCGTGGCTGCAGCGGCTGCTGCCGCCGCAGGGGATCTAATATCACCTACCTGTCCCTGTCA"
+
+trial <- translator(dna)
+print(trial)
+
