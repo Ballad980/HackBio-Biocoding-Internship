@@ -7,9 +7,47 @@ _Answer_
 I will be modelling population size over time. using the formula N = K/1 + e-r(t-t0).
 where: N = population size, K = carrying capacity, t = time(days), t0 = midpoint(time when growth is fastest, r = growth rate
 
+population_growth <- function(carrying_cap, midpoint, growth_rate, lag_phase = 4, exp_phase = 10) {
+    set.seed(42)  # For reproducibility
 
+    # Define time points (Days 0 to 20)
+    days <- 0:20  
 
-Use 20 data points for time and population size
-How can I generate series of number 20 days
-How can I generate population size constant from day 0 to 3,increase day 4 to 15, constant from day 15 to 20
+    # Define parameters for logistic growth
+    K <- carrying_cap  # Carrying capacity
+    r <- growth_rate   # Growth rate
+    t0 <- midpoint     # Midpoint of growth (inflection point)
 
+    # Ensure the total phase length does not exceed available days
+    if ((lag_phase + exp_phase) > length(days)) {
+        stop("The sum of lag phase and exponential phase must not exceed 20 days.")
+    }
+
+    # Define phase days using input lengths
+    lag_phase_days <- days[1:lag_phase]  # First few days for lag phase
+    exp_phase_days <- days[(lag_phase + 1):(lag_phase + exp_phase)]  # Next days for exponential phase
+    stationary_phase_days <- days[(lag_phase + exp_phase + 1):length(days)]  # Remaining days
+
+    # Generate population size values
+    pop_size <- numeric(length(days))
+
+    # Lag phase: Constant low population
+    pop_size[days %in% lag_phase_days] <- 0  
+
+    # Exponential phase: Logistic growth
+    exp_indices <- which(days %in% exp_phase_days)
+    pop_size[exp_indices] <- K / (1 + exp(-r * (days[exp_indices] - t0)))
+
+    # Stationary phase: Population stabilizes at carrying capacity
+    pop_size[days %in% stationary_phase_days] <- K  
+
+    # Plot the growth curve
+    plot(days, pop_size, type = "b", pch = 16, col = "blue",
+         xlab = "Days", ylab = "Population Size",
+         main = "Logistic Growth Curve")
+    abline(h=K, col="red", lty=2)  # Mark the carrying capacity
+
+}
+
+# Test the function with fixed lag and exponential phase lengths
+test <- population_growth(100, 10, 0.6, lag_phase = 7, exp_phase = 10)
