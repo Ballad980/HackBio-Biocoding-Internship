@@ -4,5 +4,24 @@ Finally, write a function for calculating the hamming distance between your Slac
 Feel free to pad it with extra words if they are not of the same length.
 
 _Answer_
-slack_name <- Ornament
-x_handle <- Balladdd
+hamming_distance <- function(slack_name, x_handle) {
+    # Ensure both strings have the same length
+    if (nchar(slack_name) != nchar(x_handle)) {
+        return("unequal string length")
+    }
+    
+    # Initialize distance
+    distance <- 0
+    
+    # Loop through each character index
+    for (index in seq_len(nchar(slack_name))) {
+        if (substr(slack_name, index, index) != substr(x_handle, index, index)) {
+            distance <- distance + 1
+        }
+    }
+    
+    return(distance)
+}
+
+_Test_
+hamming_distance("Ornament", "Balladdd")
