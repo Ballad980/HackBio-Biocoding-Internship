@@ -7,8 +7,8 @@ _Answer_
 I will be modelling population size over time. using the formula N = K/1 + e-r(t-t0).
 where: N = population size, K = carrying capacity, t = time(days), t0 = midpoint(time when growth is fastest, r = growth rate
 
-population_growth <- function(carrying_cap, midpoint, growth_rate, lag_phase = 4, exp_phase = 10) {
-    set.seed(42)  # For reproducibility
+population_growth <- function(carrying_cap, midpoint, growth_rate, lag_phase = 4, exp_phase = 10, seed = 42) {
+    set.seed(seed)  # For reproducibility
 
     # Define time points (Days 0 to 20)
     days <- 0:20  
@@ -46,8 +46,34 @@ population_growth <- function(carrying_cap, midpoint, growth_rate, lag_phase = 4
          xlab = "Days", ylab = "Population Size",
          main = "Logistic Growth Curve")
     abline(h=K, col="red", lty=2)  # Mark the carrying capacity
+    return(data.frame(Day = days, Population = pop_size, Simulation = seed))
 
 }
 
 # Test the function with fixed lag and exponential phase lengths
 test <- population_growth(100, 10, 0.6, lag_phase = 7, exp_phase = 10)
+
+
+*Question b*
+
+Using your function, generate a dataframe with 100 different growth curves.
+
+_Answer_
+
+# Generate 100 simulations with different seeds
+growth_curves <- do.call(rbind, lapply(1:100, function(i) {
+    population_growth(100, 10, 0.6, lag_phase = 4, exp_phase = 10, seed = i)
+}))
+# View the first few rows
+head(growth_curves)
+
+_dplyr option_
+library(dplyr)  # Load dplyr for bind_rows
+
+# Generate 100 simulations with different seeds
+growth_curves <- bind_rows(lapply(1:100, function(i) { 
+    population_growth(100, 10, 0.6, lag_phase = 4, exp_phase = 10, seed = i) 
+}))
+# View the first few rows
+head(growth_curves)
+
