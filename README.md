@@ -9,3 +9,7 @@ For this task, I used the HackBio built-in R Studio, however, this task can be p
 The details _name, slack_username, email, hobby, country, discipline, and preferred_language_ were gotten and each store in different vectors.
 These vectors were combined to give a comprehensive information of the various members of the team. 
 Check the stage Zero folder for the codes, you can even replicate and put fun information together using R codes. 
+
+# STAGE ONE TASK
+For this task, I wrote custom functions to carry out multiple operations including translating DNA to protein, calculating hamming distance, 
+simulating a population growth curve and calculating time to reach 80 percent carrying capacity. All codes can e found in the stage one folder.
