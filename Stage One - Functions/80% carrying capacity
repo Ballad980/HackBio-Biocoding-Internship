@@ -1,0 +1,10 @@
+*Question*
+Write a function for determining the time to reach 80% of the maximum growth; usually the carrying capacity.
+
+_Answer_
+carrying_cap_time <- function(time, od, threshold = 0.8){
+    cap_threshold <- threshold * carrying_cap
+    # Find the first time the population reaches or exceeds 80% of carrying capacity
+    index <- which(pop_size >= cap_threshold)[1]
+    return(time[index])
+}
