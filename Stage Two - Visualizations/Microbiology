@@ -38,29 +38,93 @@ line_plot(data$time, data$A11, data$A12, data$B11, data$B12,data$C11, data$C12, 
 
 *Using your function from last stage, determine the time to reach the carrying capacity for each strain/mutant*
 
+_Answer_
+I'm going to modify the funtion from the last task such that the output will be a dataframe to be used for visualization in subsequent questions.
+
 # Function to determine time to reach carrying capacity
 carrying_cap_time <- function(time, od_list){
-    # Initialize a vector to store the max times
-    max_times <- numeric(length(od_list))
-    #create a for loop to loop through each od value and return their max time
-    for (i in seq_along(od_list)){ #loop through each OD vector
-        od <- od_list[[i]] #get the current od vector
-        #find the index where od reaches its maximum value
+    # Initialize vectors to store results
+    max_times <- numeric(length(od_list))   # Max time for each OD
+    od_max <- numeric(length(od_list))      # Max OD value
+
+    # Loop through each OD vector and find max time and OD
+    for (i in seq_along(od_list)) {
+        od <- od_list[[i]]  # Get the current OD vector
+
+        # Find index of maximum OD value
         index_max <- which.max(od)
-        # Store corresponding time
+
+        # Store corresponding time and OD value
         max_times[i] <- time[index_max]
+        od_max[i] <- max(od)
     }
-    # separate odd and even indices
-        max_times_even <- max_times[seq(2, length(max_times), by = 2)]
-        max_times_odd <- max_times[seq(1, length(max_times), by = 2)]
-        
-        # Create result
-        final_result <- data.frame("Wildtype" = max_times_odd,
-                                   "Mutant" = max_times_even)
+
+    # Separate odd and even indices
+    max_times_even <- max_times[seq(2, length(max_times), by = 2)]
+    max_times_odd <- max_times[seq(1, length(max_times), by = 2)]
+    od_max_even <- od_max[seq(2, length(od_max), by = 2)]
+    od_max_odd <- od_max[seq(1, length(od_max), by = 2)]
+
+    # Create dataframe
+    final_result <- data.frame(
+        Wildtype_time = max_times_odd,
+        Wildtype_od = od_max_odd,
+        Mutant_time = max_times_even,
+        Mutant_od = od_max_even
+    )
+
     return(final_result)
-}   
+}
+
 
 *Generate a scatter plot of the time it takes to reach carrying capacity for the knock out and the knock in strains*
-Generate a box plot of the time it takes to reach carrying capacity for the knock out and the knock in strains
-Is there a statistical difference in the time it takes the knock out strains to reach their maximum carrying capacity compared to the knock in strains
-What do you see? Explain your observations as comments in your code
+
+_Answer_
+Using the function in (ii) above
+
+# Create list of OD vectors
+od_list <- list(
+    data$A1, data$A2, data$B1, data$B2, data$C1, data$C2,
+    data$A3, data$A4, data$B3, data$B4, data$C3, data$C4,
+    data$A5, data$A6, data$B5, data$B6, data$C5, data$C6,
+    data$A7, data$A8, data$B7, data$B8, data$C7, data$C8,
+    data$A9, data$A10, data$B9, data$B10, data$C9, data$C10,
+    data$A11, data$A12, data$B11, data$B12, data$C11, data$C12
+)
+# Run function
+df <- carrying_cap_time(data$time, od_list)
+
+# Display first few rows
+print(head(df))
+
+# Plot result
+plot(df$Wildtype_time, df$Wildtype_od, col = "blue", pch = 6,
+     xlab = "Time", ylab = "OD Value", main = "Carrying Capacity Time for wildtype and mutant strains",
+     font.main = 10,ylim = range(c(df$Wildtype_od, df$Mutant_od)))
+points(df$Mutant_time, df$Mutant_od, col = "red", pch = 16)
+legend("bottomright", legend = c("Wildtype", "Mutant"), col = c("blue", "red"), pch = 16)
+
+
+*Generate a box plot of the time it takes to reach carrying capacity for the knock out and the knock in strains*
+
+_Answer_
+boxplot(df$Wildtype_time, df$Mutant_time,
+        names = c("Wildtype", "Mutant"), #labels for x-axis
+        col = c("dodgerblue", "tomato2"),
+        main = "Carrying Capacity Time for Wildtype and Mutant strains",
+        cex.main = 1, #fontsize for main title 
+        col.main = "blue4", ylab = "Time")
+legend("bottomright", legend = c("Wildtype", "Mutant"), col = c("dodgerblue", "tomato"), pch = 8)
+
+*Is there a statistical difference in the time it takes the knock out strains to reach their maximum carrying capacity compared to the knock in strains*
+_Answer_
+Yes.
+
+*What do you see? Explain your observations as comments in your code*
+_Answer_
+The boxplot shows that the maximum carrying capacity time for wildtype strains is left-skewed, indicating that some wildtype strains reached 
+carrying capacity much later than others. Both boxplots are relatively tall, suggesting a high degree of variability in the time it takes for different 
+strains to reach carrying capacity.
+The median carrying capacity time for Wildtype strains is slightly above 1400, while for Mutant strains, it is slightly above 1300. 
+This suggests that, on average, Wildtype strains took a longer time to reach carrying capacity compared to Mutant strains. The spread of values further 
+implies that the growth dynamics of the strains vary, with some wildtype strains experiencing delayed growth compared to mutants.
