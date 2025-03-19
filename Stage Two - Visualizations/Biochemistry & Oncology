@@ -87,3 +87,29 @@ mutations <- fold_sift[which(fold_sift$foldx_Score > 2 & fold_sift$sift_Score < 
 nrow(mutations) 
 head(mutations) 
 
+*Task 4*
+Investigate for the amino acid that has the most functional and structural impact
+Hint: Using the amino acid column, find a way to select the first amino acid.
+Generate a frequency table for all the amino acids
+
+#Getting the amino acid causing mutations
+mutations$first_aa <- substr(mutations$aa_foldx,1,1)
+head(mutations)
+#create a frequency table of amino acids for visualization
+freq_table <- table(mutations$first_aa)
+print(freq_table)
+
+*Task 5*
+Using the amino frequency table above, generate a barplot and pie chart to represent the frequency of the amino acids.
+
+#Creating a barplot
+l <- c("A","C","D","E","F","G","H","I","K","L","M","N",
+        "P","Q","R","S","T","V","W","Y")
+barplot(freq_table, xlab = "Amino Acids", ylab = "Count", 
+        main = "Frequency of Amino acids", ylim = c(1, 1400),
+        names.arg = l, col = "steelblue",las =2)
+
+#Creating a pie chart
+l <- c("A","C","D","E","F","G","H","I","K","L","M","N",
+        "P","Q","R","S","T","V","W","Y")
+pie(freq_table, labels = l, main = "Frequency of Amino acids")
