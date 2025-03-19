@@ -83,7 +83,7 @@ A SIFT Score below 0.05 is deleterious
 A FoldX score greater than 2 kCal/mol is deleterious
 Using the criteria above, Find all mutations that have a SIFT score below 0.05 and FoldX Score above 2 (i.e: Mutations that affect both structure and function)
 
-mutations <- fold_sift[fold_sift$foldx_Score > 2 & fold_sift$sift_Score < 0.05, ]
+mutations <- fold_sift[which(fold_sift$foldx_Score > 2 & fold_sift$sift_Score < 0.05), ]
 nrow(mutations) 
 head(mutations) 
 
