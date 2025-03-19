@@ -1,53 +1,87 @@
-# Load necessary libraries
-library(ggplot2)
-library(dplyr)
-library(readr)
-library(tidyr)
-# Step 1: Import both datasets
-sift_url <- "https://raw.githubusercontent.com/HackBio-Internship/2025_project_collection/refs/heads/main/Python/Dataset/sift.tsv"
-foldx_url <- "https://raw.githubusercontent.com/HackBio-Internship/2025_project_collection/refs/heads/main/Python/Dataset/foldx.tsv"
-sift_data <- read_tsv(sift_url)
-foldx_data <- read_tsv(foldx_url)
-# Inspect the structure of datasets
-head(sift_data)
-head(foldx_data)
-# Step 2: Create 'specific_Protein_aa' column
-sift_data <- sift_data %>%
- mutate(specific_Protein_aa = paste(Protein, Amino_acid, sep = "_"))
-foldx_data <- foldx_data %>%
- mutate(specific_Protein_aa = paste(Protein, Amino_acid, sep = "_"))
-# Step 3: Merge SIFT and FoldX datasets using 'specific_Protein_aa'
-merged_data <- inner_join(sift_data, foldx_data, by = "specific_Protein_aa")
-# Step 4: Identify deleterious mutations
-deleterious_mutations <- merged_data %>%
- filter(SIFT_Score < 0.05 & FoldX_Score > 2)
-# Step 5: Extract the first amino acid (original residue) from the substitution (e.g., E63D → E)
-deleterious_mutations <- deleterious_mutations %>%
- mutate(Original_Amino_Acid = substr(Amino_acid.x, 1, 1)) # Extracts first character
-# Step 6: Generate a frequency table for the first amino acids
-amino_acid_freq <- deleterious_mutations %>%
- count(Original_Amino_Acid, name = "Frequency") %>%
- arrange(desc(Frequency))
-# Step 7: Bar Plot of Amino Acid Frequency
-ggplot(amino_acid_freq, aes(x = reorder(Original_Amino_Acid, -Frequency), y = Frequency, fill = Original_Amino_Acid)) +
- geom_bar(stat = "identity") +
- labs(title = "Frequency of Deleterious Amino Acid Mutations",
-    x = "Amino Acid",
-    y = "Frequency") +
- theme_minimal()
-# Step 8: Pie Chart of Amino Acid Frequency
-ggplot(amino_acid_freq, aes(x = "", y = Frequency, fill = Original_Amino_Acid)) +
- geom_bar(width = 1, stat = "identity") +
- coord_polar("y") +
- labs(title = "Proportion of Amino Acids in Deleterious Mutations") +
- theme_void()
-# Step 9: Identify the amino acid with the highest impact
-top_amino_acid <- amino_acid_freq %>%
- slice_max(order_by = Frequency, n = 1) # Get the amino acid with the highest occurrence
-print(top_amino_acid)
-# Step 10: Analyze Amino Acids with More Than 100 Occurrences
-high_impact_aa <- amino_acid_freq %>%
- filter(Frequency > 100)
-print(high_impact_aa)
+*Task 1* 
+Import both sift and foldx datasets; in both datasets, create a column specific_Protein_aa which will be a cantenation of the Protein and Amino_acid columns such 
+that If you have Protein A5A607 and Amino_acid E63D, you have specific_Protein_aa A5A607_E63D
 
+sift_url <- "https://raw.githubusercontent.com/HackBio-Internship/public_datasets/main/R/datasets/sift.tsv"
+
+#sift <- read.table(sift_url, sep = "\t", header = TRUE, stringsAsFactors = FALSE)
+#print(head(sift))
+# reading the data in url1(sift) gave the output:Error in read.table(url1, sep = "\t", header = TRUE, stringsAsFactors = FALSE) :
+#more columns than column names
+#Execution halted.
+
+# I had to inspect using readLines() to know what could have caused the error because the data looked visually okay.
+lines <- readLines(sift_url)
+# View the first few lines
+head(lines, 10)
+# This gave the warning:Warning message:
+#In readLines(url1) :
+  #incomplete final line found on 'https://raw.githubusercontent.com/HackBio-Internship/public_datasets/main/R/datasets/sift.tsv'
+# Checking the level of incompleteness in the error line
+# Split each line by tab and check how many fields are in each line
+field_counts <- sapply(lines, function(x) length(strsplit(x, "\t")[[1]]))
+# View distribution of column counts
+table(field_counts)
+# this showed that the last line has just one column:field_counts
+#     1      3
+#     1 155467
+which(field_counts != field_counts[2])
+#For the code above, I had initially checked for lines that are not equvalent to the header and it returned all records. This confirmed the header was had the error
+length(strsplit(lines[1], "\t")[[1]])  # This showed that the header was a one continous string not separated by tab.
+# I decided to keep only lines that have excatly 3 fields
+#lines_clean <- lines[sapply(lines, function(x) length(strsplit(x, "\t")[[1]]) == 3)]
+#class(lines_clean)# Confirm the object type(Character vector) to know how best to transform into a dataframe
+
+#Computing column names
+#header <- c("Protein", "Amino_Acid", "sift_Score")
+#print(header)
+#getting the records
+#records <- strsplit(lines_clean[-1], "\t")
+# convert to data frame
+#sift <- as.data.frame(do.call(rbind, records), stringsAsFactors = FALSE)
+#colnames(sift) <- header
+#Recall dataframe was created from a readLines() object(typically a character object). Let's confirm if the data types are accurate and make necessary corrections
+str(sift)
+#Convert sift_Score column to a numeric
+sift$sift_Score <- as.numeric(sift$sift_Score)
+# Count if any NA values are present in sift_Score
+sum(is.na(sift$sift_Score))
+
+#Adding the specific_protein_aa column
+specific_protein_aa <- paste(sift$Protein, "_", sift$Amino_acid, sep = "")
+sift$specific_protein_aa <- specific_protein_aa
+#head(sift,3)
+
+#Getting the foldX data
+
+foldx_url <- "https://raw.githubusercontent.com/HackBio-Internship/public_datasets/main/R/datasets/foldX.tsv"
+foldx <- data <- read.table(foldx_url, sep = "\t", header = FALSE, skip = 1, stringsAsFactors = FALSE)
+#The foldx data had the same issue as the sift data, that's why I skipped the header.
+#Computing column names
+colnames(foldx) <- c("Protein", "Amino_acid", "foldx_Score")
+#Adding specific_protein_aa column
+specific_protein_aa <- paste(foldx$Protein, "_", foldx$Amino_acid, sep = "")
+foldx$specific_protein_aa <- specific_protein_aa 
+#Inspecting dataframe structure for datatype accuracy
+str(foldx)
+head(foldx, 3)
+
+*Task 2*
+Using the specific_Protein_aa column, merge sift and foldx dataset into one final dataframe.
+
+fold_sift <- merge(foldx, sift, by = "specific_protein_aa")
+# Rename multiple columns for old to new
+#loading data.table library
+library(data.table)
+setnames(fold_sift, old = c('Protein.x','Amino_acid.x','Protein.y', 'Amino_acid.y'), 
+         new = c('protein_foldx','aa_foldx','protein_sift', 'aa_sift'))
+head(fold_sift,3)
+
+*Task 3* 
+According to the authors of 'https://elifesciences.org/articles/31035#abstract':
+A SIFT Score below 0.05 is deleterious
+A FoldX score greater than 2 kCal/mol is deleterious
+Using the criteria above, Find all mutations that have a SIFT score below 0.05 and FoldX Score above 2 (i.e: Mutations that affect both structure and function)
+
+mutations <- 
 
