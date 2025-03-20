@@ -97,19 +97,28 @@ mutations$first_aa <- substr(mutations$aa_foldx,1,1)
 head(mutations)
 #create a frequency table of amino acids for visualization
 freq_table <- table(mutations$first_aa)
-print(freq_table)
+freq_df <- as.data.frame(freq_table) # Creating a dataframe
+colnames(freq_df) <- c("Value", "Count")
+head(freq_df)
+
 
 *Task 5*
 Using the amino frequency table above, generate a barplot and pie chart to represent the frequency of the amino acids.
 
 #Creating a barplot
-l <- c("A","C","D","E","F","G","H","I","K","L","M","N",
-        "P","Q","R","S","T","V","W","Y")
-barplot(freq_table, xlab = "Amino Acids", ylab = "Count", 
-        main = "Frequency of Amino acids", ylim = c(1, 1400),
-        names.arg = l, col = "steelblue",las =2)
+bar <- barplot(freq_df$Count, xlab = "Amino Acids", ylab = "Count", 
+        main = "Frequency of Amino acids that \n impact Protein structure and function", 
+        font.main = 8, ylim = c(0, max(freq_df$Count) + 100), names.arg = freq_df$Value, col = "steelblue",las =2)
+# Add text labels on top of each bar
+text(x = bar, y = freq_df$Count, labels = freq_df$Count, pos = 3, cex = 0.7)
 
 #Creating a pie chart
-l <- c("A","C","D","E","F","G","H","I","K","L","M","N",
-        "P","Q","R","S","T","V","W","Y")
-pie(freq_table, labels = l, main = "Frequency of Amino acids")
+pie(freq_df$Count, labels = freq_df$Value, 
+    main = "Frequency of Amino acids that \n impact Protein structure and function", 
+    font.main = 8)
+
+*Briefly describe the amino acid with the highest impact on protein structure and function.*
+The amino acid with the highest impact on protein structure and function is Glycine. Glycine is the simplest amino acid, 
+with a single hydrogen atom as its side chain, making it achiral and highly flexible. It plays a crucial role in protein structure, 
+neurotransmission, and the synthesis of vital biomolecules like glutathione and porphyrins. Additionally, glycine contributes to collagen 
+stability and functions as an inhibitory neurotransmitter in the central nervous system.
