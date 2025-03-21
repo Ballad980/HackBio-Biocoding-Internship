@@ -29,14 +29,14 @@ which(field_counts != field_counts[2])
 #For the code above, I had initially checked for lines that are not equvalent to the header and it returned all records. This confirmed the header was had the error
 length(strsplit(lines[1], "\t")[[1]])  # This showed that the header was a one continous string not separated by tab.
 # I decided to keep only lines that have excatly 3 fields
-#lines_clean <- lines[sapply(lines, function(x) length(strsplit(x, "\t")[[1]]) == 3)]
-#class(lines_clean)# Confirm the object type(Character vector) to know how best to transform into a dataframe
+lines_clean <- lines[sapply(lines, function(x) length(strsplit(x, "\t")[[1]]) == 3)]
+class(lines_clean)# Confirm the object type(Character vector) to know how best to transform into a dataframe
 
 #Computing column names
-#header <- c("Protein", "Amino_Acid", "sift_Score")
+header <- c("Protein", "Amino_Acid", "sift_Score")
 #print(header)
 #getting the records
-#records <- strsplit(lines_clean[-1], "\t")
+#records <- strsplit(lines_clean, "\t")
 # convert to data frame
 #sift <- as.data.frame(do.call(rbind, records), stringsAsFactors = FALSE)
 #colnames(sift) <- header
@@ -48,7 +48,7 @@ sift$sift_Score <- as.numeric(sift$sift_Score)
 sum(is.na(sift$sift_Score))
 
 #Adding the specific_protein_aa column
-specific_protein_aa <- paste(sift$Protein, "_", sift$Amino_acid, sep = "")
+specific_protein_aa <- paste(sift$Protein, "_", sift$Amino_Acid, sep = "")
 sift$specific_protein_aa <- specific_protein_aa
 #head(sift,3)
 
@@ -70,11 +70,14 @@ head(foldx, 3)
 Using the specific_Protein_aa column, merge sift and foldx dataset into one final dataframe.
 
 fold_sift <- merge(foldx, sift, by = "specific_protein_aa")
+# Drop duplicate collumns and Rename columns for clarity
+# Drop columns by name
+fold_sift  <- fold_sift [, !(names(fold_sift ) %in% c("Protein.y", "Amino_Acid"))]
 # Rename multiple columns for old to new
 #loading data.table library
 library(data.table)
-setnames(fold_sift, old = c('Protein.x','Amino_acid.x','Protein.y', 'Amino_acid.y'), 
-         new = c('protein_foldx','aa_foldx','protein_sift', 'aa_sift'))
+setnames(fold_sift, old = c('Protein.x','Amino_acid'), 
+         new = c('protein','amino_acid'))
 head(fold_sift,3)
 
 *Task 3* 
@@ -93,7 +96,7 @@ Hint: Using the amino acid column, find a way to select the first amino acid.
 Generate a frequency table for all the amino acids
 
 #Getting the amino acid causing mutations
-mutations$first_aa <- substr(mutations$aa_foldx,1,1)
+mutations$first_aa <- substr(mutations$amino_acid,1,1)
 head(mutations)
 #create a frequency table of amino acids for visualization
 freq_table <- table(mutations$first_aa)
