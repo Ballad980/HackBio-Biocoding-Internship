@@ -85,8 +85,22 @@ Top upregulated genes
 5. DTHD1
 
 Top downregulated genes
-1. TBX5
-2. IFITM1
+1. TBX5: DNA-binding protein that regulates the transcription of several genes and is involved in heart development and limb pattern formation.
+         Binds to the core DNA motif of NPPA promoter.
+2. IFITM1: FN-induced antiviral protein which inhibits the entry of viruses to the host cell cytoplasm, permitting endocytosis, but preventing 
+             subsequent viral fusion and release of viral contents into the cytosol.
+           Active against multiple viruses, including influenza A virus, SARS coronaviruses (SARS-CoV and SARS-CoV-2), Marburg virus (MARV), Ebola virus (EBOV),
+             Dengue virus (DNV), West Nile virus (WNV), human immunodeficiency virus type 1 (HIV-1) and hepatitis C virus (HCV) (PubMed:26354436, 33270927).
+          Can inhibit: influenza virus hemagglutinin protein-mediated viral entry, MARV and EBOV GP1,2-mediated viral entry and SARS-CoV and SARS-CoV-2 S 
+             protein-mediated viral entry.
+          Also implicated in cell adhesion and control of cell growth and migration (PubMed:33270927).
+          Inhibits SARS-CoV-2 S protein-mediated syncytia formation (PubMed:33051876).
+          Plays a key role in the antiproliferative action of IFN-gamma either by inhibiting the ERK activation or by arresting cell growth in G1 phase in a 
+             p53-dependent manner.
+          Acts as a positive regulator of osteoblast differentiation.
+          In hepatocytes, IFITM proteins act in a coordinated manner to restrict HCV infection by targeting the endocytosed HCV virion for lysosomal degradation.
+          IFITM2 and IFITM3 display anti-HCV activity that may complement the anti-HCV activity of IFITM1 by inhibiting the late stages of HCV entry, possibly in 
+           a coordinated manner by trapping the virion in the endosomal pathway and targeting it for degradation at the lysosome.
 3. LAMA2
 4. CAV2
 5. TNN
