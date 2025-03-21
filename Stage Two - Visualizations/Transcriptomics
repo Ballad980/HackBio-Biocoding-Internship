@@ -1,68 +1,95 @@
-# Load necessary libraries
-library(ggplot2)
-library(dplyr)
-library(readr)
-# Step 1: Load the dataset
+This is a processed RNAseq dataset involving reading in quantitated gene expression data from an RNA-seq experiment, 
+exploring the data using base R functions and then interpretation. The dataset contains an experiment between a diseased 
+cell line and diseased cell lines treated with compound X. The difference in expression change between the two health status is 
+computed as Fold change to log 2 (Log2FC) and the significance of each is computed in p-value.
+
+*Task 1*
+Generate a volcano plot.
+
 url <- "https://gist.githubusercontent.com/stephenturner/806e31fce55a8b7175af/raw/1a507c4c3f9f1baaa3a69187223ff3d3050628d4/results.txt"
-data <- read_tsv(url)
-# Inspect the first few rows of the dataset
-head(data)
-# Step 2: Generate the Volcano Plot
-# Compute -log10(p-value) for visualization
-data <- data %>%
- mutate(logP = -log10(P.Value))
-# Create the volcano plot
-volcano_plot <- ggplot(data, aes(x = logFC, y = logP)) +
- geom_point(aes(color = (logFC > 1 & P.Value < 0.01) | (logFC < -1 & P.Value < 0.01)), alpha = 0.5) +
- scale_color_manual(values = c('grey', 'red')) +
- geom_vline(xintercept = c(-1, 1), linetype = 'dashed', color = 'blue') +
- geom_hline(yintercept = -log10(0.01), linetype = 'dashed', color = 'blue') +
- labs(title = 'Volcano Plot', x = 'Log2 Fold Change', y = '-log10(p-value)') +
- theme_minimal()
-# Display the plot
-print(volcano_plot)
-# Step 3: Identify Upregulated and Downregulated Genes
-upregulated_genes <- data %>%
- filter(logFC > 1, P.Value < 0.01) %>%
- arrange(desc(logFC))
-downregulated_genes <- data %>%
- filter(logFC < -1, P.Value < 0.01) %>%
- arrange(logFC)
-# Display the top 5 upregulated and downregulated genes
-top5_upregulated <- head(upregulated_genes, 5)
-top5_downregulated <- head(downregulated_genes, 5)
-print("Top 5 Upregulated Genes:")
-print(top5_upregulated$Gene)
-print("Top 5 Downregulated Genes:")
-print(top5_downregulated$Gene)
-# Step 4: Investigate Gene Functions (Using GeneCards or Ensembl)
-# This step requires querying an online database
-# Install and load the biomaRt package for accessing Ensembl data
-if (!requireNamespace("biomaRt", quietly = TRUE)) {
- install.packages("biomaRt")
-}
-library(biomaRt)
-# Use Ensembl as the BioMart database
-ensembl <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
-# Function to retrieve gene descriptions
-get_gene_description <- function(gene_symbol) {
- result <- getBM(attributes = c('hgnc_symbol', 'description'),
-         filters = 'hgnc_symbol',
-         values = gene_symbol,
-         mart = ensembl)
- if (nrow(result) > 0) {
-  return(result$description[1])
- } else {
-  return(NA)
- }
-}
-# Retrieve descriptions for top 5 upregulated genes
-upregulated_descriptions <- sapply(top5_upregulated$Gene, get_gene_description)
-names(upregulated_descriptions) <- top5_upregulated$Gene
-# Retrieve descriptions for top 5 downregulated genes
-downregulated_descriptions <- sapply(top5_downregulated$Gene, get_gene_description)
-names(downregulated_descriptions) <- top5_downregulated$Gene
-print("Descriptions of Top 5 Upregulated Genes:")
-print(upregulated_descriptions)
-print("Descriptions of Top 5 Downregulated Genes:")
-print(downregulated_descriptions)
+lines <- readLines(url) # Gave a warning
+#Investigating the warning
+field_counts <- sapply(lines, function(x) length(strsplit(x, "\t")[[1]]))
+# View distribution of column counts
+table(field_counts) # Showed all fields had only one column(a single string with all inputs separated by a space)
+#Splitting the data
+header <- strsplit(lines[1], " ")[[1]]
+records <- strsplit(lines[-1], " ")
+#Creating a dataframe
+RNAseq <- as.data.frame(do.call(rbind, data_list), stringsAsFactors = FALSE)
+colnames(RNAseq) <- header
+head(RNAseq)
+#Checking structure to ensure datatype accuracy
+str(RNAseq)
+#Coverting all numeric columns to correct datatype
+RNAseq$log2FoldChange <- as.numeric(RNAseq$log2FoldChange)
+RNAseq$pvalue <- as.numeric(RNAseq$pvalue)
+RNAseq$padj <- as.numeric(RNAseq$padj)
+#Confirming datatypes 
+str(RNAseq)
+
+#creating the volcano plot
+plot(RNAseq$log2FoldChange, -log10(RNAseq$pvalue),
+                      pch = 20, cex = 0.7,
+                      col = "grey",
+                      main = "RNA_seq Gene expression",
+                      xlab = "log2(Fold Change)",
+                      ylab = "-log10(p-value)")
+
+*Task 2*
+Determine the upregulated genes (Genes with Log2FC > 1 and pvalue < 0.01)
+
+#Upregulated genes
+# Subset the data
+upregulated <- subset(RNAseq, pvalue < 0.01 & log2FoldChange > 1)
+#plotting upregulated genes
+with(upregulated,
+     points(log2FoldChange, -log10(pvalue), pch = 18, col = "red"))
+
+*Task 3*
+Determine the downregulated genes (Genes with Log2FC < -1 and pvalue < 0.01)
+
+# Subset the data
+downregulated <- subset(RNAseq, pvalue < 0.01 & log2FoldChange < -1)
+#plotting downregulated genes
+with(downregulated,
+     points(log2FoldChange, -log10(pvalue), pch = 18, col = "black")) 
+#Adding legend
+legend("bottomleft", legend = c("Upregulated", "Downregulated"),
+       title = "Genes", fill = c("red", "black"))
+
+*Task 4*
+What are the functions of the top 5 upregulated genes and top 5 downregulated genes. (Use genecards)
+
+# Showing labels of top 5 up and down regulated genes on plot
+text(upregulated$log2FoldChange[1:5], 
+    -log10(upregulated$pvalue[1:5]), 
+    labels = upregulated$Gene[1:5], pos = 2, cex = 0.5)
+
+text(downregulated$log2FoldChange[1:5], 
+    -log10(downregulated$pvalue[1:5]), 
+    labels = downregulated$Gene[1:5], pos = 4, cex = 0.5)
+
+#Printing the names of top up and down regulated genes
+top_upregulated <- upregulated$Gene[1:5]
+top_downregulated <- downregulated$Gene[1:5]
+print(paste("Top 5 upregulated genes are:", top_upregulated, 
+            "Top 5 downregulated genes are:", top_downregulated))
+
+#Getting their functions from genecards database
+Top upregulated genes
+1. EMILIN2
+2. POU3F4
+3. LOC285954
+4. VEPH1
+5. DTHD1
+
+Top downregulated genes
+1. TBX5
+2. IFITM1
+3. LAMA2
+4. CAV2
+5. TNN
+
+
+
