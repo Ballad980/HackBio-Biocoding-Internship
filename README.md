@@ -13,3 +13,7 @@ Check the stage Zero folder for the codes, you can even replicate and put fun in
 # STAGE ONE TASK
 For this task, I wrote custom functions to carry out multiple operations including translating DNA to protein, calculating hamming distance, 
 simulating a population growth curve and calculating time to reach 80 percent carrying capacity. All codes can e found in the stage one folder.
+
+# STAGE TWO TASK
+For this stage, I created various visualizations including plots showing growth curve of bacteria replicates, Volcano plot showing gene mutation in cancer, bar and pie plots showing amino acids responsible 
+for protein structure and function. Laced into this was data wrangling and transformation.
