@@ -16,7 +16,7 @@ table(field_counts) # Showed all fields had only one column(a single string with
 header <- strsplit(lines[1], " ")[[1]]
 records <- strsplit(lines[-1], " ")
 #Creating a dataframe
-RNAseq <- as.data.frame(do.call(rbind, data_list), stringsAsFactors = FALSE)
+RNAseq <- as.data.frame(do.call(rbind, records), stringsAsFactors = FALSE)
 colnames(RNAseq) <- header
 head(RNAseq)
 #Checking structure to ensure datatype accuracy
@@ -78,11 +78,16 @@ print(paste("Top 5 upregulated genes are:", top_upregulated,
 
 #Getting their functions from genecards database
 Top upregulated genes
-1. EMILIN2
-2. POU3F4
-3. LOC285954
-4. VEPH1
-5. DTHD1
+1. EMILIN2: May be responsible for anchoring smooth muscle cells to elastic fibers, and may be involved not only in the formation of the elastic fiber,
+                but also in the processes that regulate vessel assembly.
+            Has cell adhesive capacity. 
+2. POU3F4: Probable transcription factor which exert its primary action widely during early neural development and in a very limited set of neurons in the 
+                  mature brain.
+3. LOC285954: NA
+4. VEPH1: Interacts with TGF-beta receptor type-1 (TGFBR1) and inhibits dissociation of activated SMAD2 from TGFBR1, impeding its nuclear accumulation 
+                and resulting in impaired TGF-beta signaling.
+          May also affect FOXO, Hippo and Wnt signaling
+5. DTHD1: NA
 
 Top downregulated genes
 1. TBX5: DNA-binding protein that regulates the transcription of several genes and is involved in heart development and limb pattern formation.
@@ -101,9 +106,19 @@ Top downregulated genes
           In hepatocytes, IFITM proteins act in a coordinated manner to restrict HCV infection by targeting the endocytosed HCV virion for lysosomal degradation.
           IFITM2 and IFITM3 display anti-HCV activity that may complement the anti-HCV activity of IFITM1 by inhibiting the late stages of HCV entry, possibly in 
            a coordinated manner by trapping the virion in the endosomal pathway and targeting it for degradation at the lysosome.
-3. LAMA2
-4. CAV2
-5. TNN
+3. LAMA2: Binding to cells via a high affinity receptor, laminin is thought to mediate the attachment, migration and organization of cells into tissues 
+          during embryonic development by interacting with other extracellular matrix components.
+4. CAV2: May act as a scaffolding protein within caveolar membranes.
+         Interacts directly with G-protein alpha subunits and can functionally regulate their activity.
+         Acts as an accessory protein in conjunction with CAV1 in targeting to lipid rafts and driving caveolae formation.
+         The Ser-36 phosphorylated form has a role in modulating mitosis in endothelial cells.
+         Positive regulator of cellular mitogenesis of the MAPK signaling pathway.
+         Required for the insulin-stimulated nuclear translocation and activation of MAPK1 and STAT3, and the subsequent regulation of cell cycle progression (By similarity).
+5. TNN: Extracellular matrix protein that seems to be a ligand for ITGA8:ITGB1, ITGAV:ITGB1 and ITGA4:ITGB1 (By similarity) (PubMed:17909022).
+         Involved in neurite outgrowth and cell migration in hippocampal explants (By similarity).
+         During endochondral bone formation, inhibits proliferation and differentiation of proteoblasts mediated by canonical WNT signaling (By similarity).
+         In tumors, stimulates angiogenesis by elongation, migration and sprouting of endothelial cells (PubMed:19884327).
+         Expressed in most mammary tumors, may facilitate tumorigenesis by supporting the migratory behavior of breast cancer cells
 
 
 
