@@ -1,3 +1,6 @@
+
+<img width="376" height="145" alt="Hackbio" src="https://github.com/user-attachments/assets/b0c1b7da-5600-4710-b3b3-35315670e6d0" />
+
 # HackBio-Biocoding-Internship
 This repository contains all projects carried out during the HackBio Coding for Biologist internship.
 
